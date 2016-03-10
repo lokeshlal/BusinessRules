@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Fact Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Person</td>
+                        <td>
+                            <button type="button" class="btn btn-link">Edit</button>
+                            <button type="button" class="btn btn-link">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Person_Parent</td>
+                        <td>
+                            <button type="button" class="btn btn-link">Edit</button>
+                            <button type="button" class="btn btn-link">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Fact:</strong> <span id="factName">Person</span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <form role="form" method="post">
+                            <div>
+                                <div class="form-group">
+                                    <label>Field Name:</label>
+                                    <input class="form-control" id="fieldName" name="fieldName">
+                                </div>
+                                <div class="form-group">
+                                    <label>Field Type:</label>
+                                    <select class="form-control" id="fieldType" name="fieldType">
+                                        <option value="System.Int32">Integer</option>
+                                        <option value="System.String">String</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-default">Save</button>
+                            <button type="reset" class="btn btn-default">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
