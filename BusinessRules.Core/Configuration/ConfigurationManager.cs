@@ -27,6 +27,19 @@ namespace BusinessRules.Core
             }
         }
 
+        [ConfigurationProperty("rulesPath", DefaultValue = "rules.xml", IsRequired = true)]
+        public string RulesPath
+        {
+            get
+            {
+                return (string)this["rulesPath"];
+            }
+            set
+            {
+                this["rulesPath"] = value;
+            }
+        }
+
         [ConfigurationProperty("entitiesPath", DefaultValue = "entities.xml", IsRequired = true)]
         public string EntitiesPath
         {

@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Rules";
+}
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="table-responsive">
+            <div>
+                <a href="#" data-toggle="modal" data-target="#new-rule-modal">Add</a>
+            </div>
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Rule Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (string rule in Helper.AvailableRules)
+                    {
+                        <tr>
+                            <td>@rule</td>
+                            <td>
+                                <button type="button" onclick="editRule(this);" class="btn btn-link editFact">Edit</button>
+                                <button type="button" onclick="deleteRule(this);" class="btn btn-link deleteFact">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-7 hidden" id="factDetails">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Rule:</strong> <span id="ruleNameLbl">rule name</span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <form role="form" method="post">
+                            <div>
+                                <a href="#" id="btnAddNewField">Add</a>
+                            </div>
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Rule Name</th>
+                                        <th>Field Type</th>
+                                        <th>Edit Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="factFields"></tbody>
+                            </table>
+
+                            <button id="btnSaveFact" type="button" class="btn btn-default">Save</button>
+                            <button id="btnCancelFact" type="button" class="btn btn-default">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

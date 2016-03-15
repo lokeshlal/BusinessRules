@@ -12,9 +12,9 @@ namespace BusinessRules.Core
     public static class RulesManager
     {
         #region private fields
-        private static ConcurrentDictionary<string, Rule> rulesCache = new ConcurrentDictionary<string, Rule>();
+        internal static ConcurrentDictionary<string, Rule> rulesCache = new ConcurrentDictionary<string, Rule>();
         private static readonly object lockObj = new object();
-        private static string rulesPath = "rules.xml";
+        private static string rulesPath = ConfigurationManager.Configuration.RulesPath;
         #endregion
 
         #region .ctor

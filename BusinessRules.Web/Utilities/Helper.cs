@@ -2,13 +2,21 @@
 
 namespace BusinessRules.Web
 {
-    public class FactsHelper
+    public class Helper
     {
         public static List<string> AvailableFacts
         {
             get
             {
                 return Core.Parameters.AvialableFacts();
+            }
+        }
+
+        public static List<string> AvailableRules
+        {
+            get
+            {
+                return Core.Parameters.AvialableRules();
             }
         }
     }

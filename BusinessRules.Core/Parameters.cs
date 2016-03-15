@@ -33,6 +33,12 @@ namespace BusinessRules.Core
             return EntityFacade.typeCache.Keys.ToList();
         }
 
+        public static List<string> AvialableRules()
+        {
+            return RulesManager.rulesCache.Keys.ToList();
+        }
+
+
         public static Dictionary<string, int> AvialableMethods()
         {
             return BasicMethodsManager.GetAllMethodNames();
