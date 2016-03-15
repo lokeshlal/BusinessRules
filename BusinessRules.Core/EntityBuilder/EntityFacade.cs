@@ -10,9 +10,9 @@ namespace BusinessRules.Core
 {
     public static class EntityFacade
     {
-        private static ConcurrentDictionary<string, Type> typeCache = new ConcurrentDictionary<string, Type>();
+        internal static ConcurrentDictionary<string, Type> typeCache = new ConcurrentDictionary<string, Type>();
         private static readonly object lockObj = new object();
-        private static string entityPath = "entities.xml";
+        private static string entityPath = ConfigurationManager.Configuration.EntitiesPath;
 
         #region .ctor
         static EntityFacade()
@@ -48,9 +48,32 @@ namespace BusinessRules.Core
             return GetTypeObject(entityName);
         }
 
+        public static bool IsEntityExists(string entityName)
+        {
+            if (typeCache.ContainsKey(entityName))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static void AddorUpdateEntity(EntityDefinition entity)
+        {
+            if (IsEntityExists(entity.EntityName))
+            {
+                GetType(entity, false);
+                UpdateEntity(entity);
+            }
+            else
+            {
+                GetType(entity);
+            }
+        }
+
         public static void RemoveEntity(string entityName)
         {
-            try {
+            try
+            {
                 XDocument xDoc = XDocument.Load(entityPath, LoadOptions.None);
 
                 xDoc.Element("root").Descendants().First(d => d.Attribute("name").Value == entityName).Remove();
@@ -63,6 +86,26 @@ namespace BusinessRules.Core
             catch { /* Eat exception */ }
         }
 
+        public static EntityDefinition GetEntityDefinition(string entityName)
+        {
+            XDocument xDoc = XDocument.Load(entityPath, LoadOptions.None);
+            XElement element = xDoc.Element("root").Descendants().First(d => d.Attribute("name").Value == entityName);
+
+            EntityDefinition entityDefinition = new EntityDefinition()
+            {
+                EntityName = element.Attribute("name").Value,
+                EntityFields = Serializer.Deserialize<List<EntityFieldDefinition>>(element.Attribute("fields").Value)
+            };
+            return entityDefinition;
+        }
+
+        public static void DeleteEntity(string entityName)
+        {
+            XDocument xDoc = XDocument.Load(entityPath, LoadOptions.None);
+            XElement deletedElement = xDoc.Element("root").Descendants().First(d => d.Attribute("name").Value == entityName);
+            deletedElement.Remove();
+            SaveEntities(xDoc);
+        }
         #endregion
 
         #region private methods
@@ -83,7 +126,18 @@ namespace BusinessRules.Core
             SaveEntities(xDoc);
         }
 
+        private static void UpdateEntity(EntityDefinition entity)
+        {
+            XDocument xDoc = XDocument.Load(entityPath, LoadOptions.None);
+            XElement updatedElement = xDoc.Element("root").Descendants().First(d => d.Attribute("name").Value == entity.EntityName);
+            updatedElement.SetAttributeValue("name", entity.EntityName);
+            updatedElement.SetAttributeValue("fields", Serializer.Serialize(entity.EntityFields));
+            SaveEntities(xDoc);
+        }
+
         
+
+
         private static void LoadEntities()
         {
             XDocument xDoc = XDocument.Load(entityPath, LoadOptions.None);

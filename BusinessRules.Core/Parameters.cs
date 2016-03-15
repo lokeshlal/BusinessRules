@@ -19,13 +19,18 @@ namespace BusinessRules.Core
             // Add user defined types
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.IsDynamic))
             {
-                foreach (Type t in asm.GetTypes())
+                foreach (Type t in asm.GetTypes().Where(t1 => t1.Module.ScopeName.Equals("MainModule")))
                 {
                     availableDataTypes.Add(t.Name, t.Name);
                 }
             }
 
             return availableDataTypes;
+        }
+
+        public static List<string> AvialableFacts()
+        {
+            return EntityFacade.typeCache.Keys.ToList();
         }
 
         public static Dictionary<string, int> AvialableMethods()

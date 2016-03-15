@@ -11,7 +11,7 @@ namespace BusinessRules.Core
     {
         public static Dictionary<string, Assembly> methodLibraryCaches = new Dictionary<string, Assembly>();
         public static Dictionary<string, int> methodNamesCache = new Dictionary<string, int>();
-        public static string methodsFolder = @"E:\Github\BusinessRules\BusinessRules.Console\HelperDlls"; //"libraries";
+        public static string methodsFolder = ConfigurationManager.Configuration.BasicMethodsPath; //"libraries";
 
         static BasicMethodsManager()
         {

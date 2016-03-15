@@ -11,7 +11,7 @@ namespace BusinessRules.Core
     {
         #region private fields
         private static Dictionary<string, Constant> constantCache = new Dictionary<string, Constant>();
-        private static string constantPath = "constants.xml";
+        private static string constantPath = ConfigurationManager.Configuration.ConstantsPath;
         private static Constants instance = null;
         private static readonly object lockObj = new object();
         #endregion

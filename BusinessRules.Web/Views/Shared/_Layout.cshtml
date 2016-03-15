@@ -44,28 +44,14 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li class="sidebar-search">
-                            <div class="input-group custom-search-form">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <!-- /input-group -->
+                        <li>
+                            <a href="/"><i class="fa fa-code fa-fw"></i> Facts</a>
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="/home/rules"><i class="fa fa-gears fa-fw"></i> Rules</a>
                         </li>
                         <li>
-                            <a href="/facts"><i class="fa fa-code fa-fw"></i> Facts</a>
-                        </li>
-                        <li>
-                            <a href="/rules"><i class="fa fa-gears fa-fw"></i> Rules</a>
-                        </li>
-                        <li>
-                            <a href="/workflows"><i class="fa fa-wrench fa-fw"></i> Workflows</a>
+                            <a href="/home/workflows"><i class="fa fa-wrench fa-fw"></i> Workflows</a>
                         </li>
                     </ul>
                 </div>
@@ -93,5 +79,7 @@
     <script src="~/bower_components/raphael/raphael-min.js"></script>
     <!-- Custom Theme JavaScript -->
     <script src="~/dist/js/sb-admin-2.js"></script>
+
+    <script src="~/Scripts/facts.js"></script>
 </body>
 </html>

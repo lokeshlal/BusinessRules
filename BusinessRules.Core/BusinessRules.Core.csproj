@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicMethods\BasicMethodsManager.cs" />
+    <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="EntityBuilder\EntityFacade.cs" />
     <Compile Include="EntityBuilder\EntityTypeBuilder.cs" />

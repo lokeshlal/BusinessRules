@@ -13,11 +13,18 @@ namespace BusinessRules.Web
     {
         protected void Application_Start()
         {
+            Core.ConfigurationManager.Configure();
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //GlobalConfiguration.Configure(WebApiConfig.Register); // NEW way
+
+
+            ValueProviderFactories.Factories.Add(new JsonValueProviderFactory());
         }
     }
 }

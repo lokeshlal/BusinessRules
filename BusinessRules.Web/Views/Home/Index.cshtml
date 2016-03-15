@@ -5,6 +5,9 @@
 <div class="row">
     <div class="col-lg-4">
         <div class="table-responsive">
+            <div>
+                <a href="#" data-toggle="modal" data-target="#new-fact-modal">Add</a>
+            </div>
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
@@ -13,48 +16,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Person</td>
-                        <td>
-                            <button type="button" class="btn btn-link">Edit</button>
-                            <button type="button" class="btn btn-link">Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Person_Parent</td>
-                        <td>
-                            <button type="button" class="btn btn-link">Edit</button>
-                            <button type="button" class="btn btn-link">Delete</button>
-                        </td>
-                    </tr>
+
+                    @foreach (string fact in FactsHelper.AvailableFacts)
+                    {
+                        <tr>
+                            <td>@fact</td>
+                            <td>
+                                <button type="button" onclick="editFact(this);" class="btn btn-link editFact">Edit</button>
+                                <button type="button" onclick="deleteFact(this);" class="btn btn-link deleteFact">Delete</button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="col-lg-7">
+    <div class="col-lg-7 hidden" id="factDetails">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <strong>Fact:</strong> <span id="factName">Person</span>
+                <strong>Fact:</strong> <span id="factNameLbl">Person</span>
             </div>
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-10">
                         <form role="form" method="post">
                             <div>
-                                <div class="form-group">
-                                    <label>Field Name:</label>
-                                    <input class="form-control" id="fieldName" name="fieldName">
-                                </div>
-                                <div class="form-group">
-                                    <label>Field Type:</label>
-                                    <select class="form-control" id="fieldType" name="fieldType">
-                                        <option value="System.Int32">Integer</option>
-                                        <option value="System.String">String</option>
-                                    </select>
-                                </div>
+                                <a href="#" id="btnAddNewField">Add</a>
                             </div>
-                            <button type="submit" class="btn btn-default">Save</button>
-                            <button type="reset" class="btn btn-default">Cancel</button>
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Field Name</th>
+                                        <th>Field Type</th>
+                                        <th>Edit Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="factFields"></tbody>
+                            </table>
+
+                            <button id="btnSaveFact" type="button" class="btn btn-default">Save</button>
+                            <button id="btnCancelFact" type="button" class="btn btn-default">Cancel</button>
                         </form>
                     </div>
                 </div>
@@ -62,3 +63,56 @@
         </div>
     </div>
 </div>
+
+
+
+<div class="modal fade" id="new-field-modal" tabindex="-1" role="dialog" aria-labelledby="New Field" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="Login">New Field</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Field Name:</label>
+                    <input class="form-control" id="fieldName" name="fieldName">
+                </div>
+                <div class="form-group">
+                    <label>Field Type:</label>
+                    <select class="form-control" id="fieldType" name="fieldType">
+                        @foreach (KeyValuePair<string, string> kvp in BusinessRules.Core.Parameters.AvialableDataTypes())
+                        {
+                            <option value="@kvp.Value">@kvp.Key</option>
+                        }
+                    </select>
+                </div>
+
+                <p class="text-center">
+                    <button id="btnAddFieldModel" class="btn btn-primary"><i class="fa fa-sign-in"></i> Add</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="new-fact-modal" tabindex="-1" role="dialog" aria-labelledby="New Fact" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="Login">New Fact</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Fact Name:</label>
+                    <input class="form-control" id="factName" name="factName">
+                </div>
+                <p class="text-center">
+                    <button id="btnAddFactModel" class="btn btn-primary"><i class="fa fa-sign-in"></i> Add</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
