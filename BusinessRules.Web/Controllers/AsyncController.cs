@@ -186,6 +186,14 @@ namespace BusinessRules.Web.Controllers
             string ruleName = executeRuleDefinition.ruleName;
             return JsonConvert.SerializeObject(RulesManager.ExecuteRule(ruleName, entity));
         }
+
+        [HttpPost]
+        public string ExecuteRuleGroup(ExecuteRuleDefinition executeRuleDefinition)
+        {
+            object entity = executeRuleDefinition.entity;
+            string ruleGroupName = executeRuleDefinition.ruleName;
+            return JsonConvert.SerializeObject(RulesManager.ExecuteRuleGroup(ruleGroupName, entity));
+        }
         #endregion
     }
 }

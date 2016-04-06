@@ -99,6 +99,22 @@ namespace BusinessRules.Core
             }
             return entity;
         }
+
+        public static IEntity ExecuteRuleGroup(string ruleGroupName, object obj)
+        {
+            List<Rule> rules = GetRulesInGroup(ruleGroupName).Select(r => r.Value).ToList(); ;
+            if (rules.Count > 0)
+            {
+                IEntity entity = EntityFacade.ConvertObjectToEntity(obj, rules[0].EntityName);
+                rules = rules.OrderByDescending(r => r.Priority).ToList();
+                foreach (Rule rule in rules)
+                {
+                    entity = ExecuteRule(rule.RuleName, entity);
+                }
+                return entity;
+            }
+            return null;
+        }
         public static IEntity ExecuteRule(string ruleName, IEntity entity)
         {
             Rule rule = GetRuleByName(ruleName).Value;
