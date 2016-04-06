@@ -33,18 +33,22 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
     <!-- jQuery -->
     <script src="~/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
 
-
+    <style>
+        .executionContainer {
+            border: 1px solid lightgray;
+            min-height: 75px;
+        }
+    </style>
 </head>
 <body>
     <div id="wrapper">
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">Simple Business Rules</a>
+                <a class="navbar-brand" href="/home/index">Simple Business Rules</a>
             </div>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
@@ -54,12 +58,6 @@
                         </li>
                         <li>
                             <a href="/home/rules"><i class="fa fa-gears fa-fw"></i> Rules</a>
-                        </li>
-                        <li>
-                            <a href="/home/workflows"><i class="fa fa-wrench fa-fw"></i> Workflows</a>
-                        </li>
-                        <li>
-                            <a href="/home/constants"><i class="fa fa-key fa-fw"></i> Constants</a>
                         </li>
                     </ul>
                 </div>

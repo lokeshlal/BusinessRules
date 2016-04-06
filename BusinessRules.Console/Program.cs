@@ -33,16 +33,15 @@ namespace BusinessRules.Console
                 ruleName = "PersonRule1"
             };
 
-
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:61871/");
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            System.Console.WriteLine("-1-");
-            System.Console.ReadLine();
             var resp2 = client.PostAsync("api/async/executerule", new System.Net.Http.StringContent(JsonConvert.SerializeObject(executeRule), Encoding.UTF8, "application/json")).Result;
-            System.Console.WriteLine("-2-");
             resp2.EnsureSuccessStatusCode();
             var ss = resp2.Content.ReadAsStringAsync().Result;
+            System.Console.WriteLine("--Output--");
+            System.Console.WriteLine(ss);
+            System.Console.ReadLine();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace BusinessRules.Core
 
         public static IEntity ConvertObjectToEntity(object obj, string entityName)
         {
-            IEntity entity = (IEntity)((Newtonsoft.Json.Linq.JObject)obj).ToObject(typeCache[entityName]); ;
+            IEntity entity = (IEntity)((Newtonsoft.Json.Linq.JObject)obj).ToObject(typeCache[entityName]);
             return entity;
         }
 
