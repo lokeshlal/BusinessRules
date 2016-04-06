@@ -15,6 +15,9 @@ namespace BusinessRules.Core
             // Adding primitive types
             availableDataTypes.Add("Integer", PrimitiveTypes.GetNameByType(typeof(int)));
             availableDataTypes.Add("String", PrimitiveTypes.GetNameByType(typeof(string)));
+            availableDataTypes.Add("Float", PrimitiveTypes.GetNameByType(typeof(float)));
+            availableDataTypes.Add("Boolean", PrimitiveTypes.GetNameByType(typeof(bool)));
+            availableDataTypes.Add("DateTime", PrimitiveTypes.GetNameByType(typeof(DateTime)));
 
             // Add user defined types
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.IsDynamic))

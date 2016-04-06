@@ -20,6 +20,10 @@ var helperClick1 = function (obj) {
 
 $("#accordion button").click(helperClick);
 
+var deleteCondition = function(ele)
+{
+    var ruleexecutionContainer = $(ele).closest('.ruleexecution').eq(0).remove();
+}
 var deleteRule = function (ele) {
     var ruleName = $(ele).closest('tr').find('td').eq(0).html();
     $.ajax({
@@ -95,7 +99,7 @@ var editRule = function (ele) {
                         propertySelectElement1 += '</select>';
 
 
-                        $('.executionContainer').eq(0).append('<div class="ruleexecution"><div class="form-group"><label>Property:</label><div class="propertyContainer">'
+                        $('.executionContainer').eq(0).append('<div class="ruleexecution"><div class="form-group"><div class="removeExecution" onclick="deleteCondition(this);">Delete</div></div><div class="form-group"><label>Property:</label><div class="propertyContainer">'
                             + propertySelectElement1 + '</div></div><div class="form-group"><label>Order:</label><input class="form-control order" value="' + val.order + '"></div><div contenteditable="true" class="executionDiv" onkeydown="return keydown(event);"  onblur="activeDiv(this);" style="border: 1px solid lightgray; min-height: 75px; margin-bottom: 10px;">'
                             + val.execution + '</div></div>');
                     });
