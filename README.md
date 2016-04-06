@@ -7,7 +7,7 @@ Simple Business Rules
 4. Rest based services to execute the rules
 
 Pending Items:
-1. Add more primitive type support
-2. Add more test cases
+
+1. Add more test cases
 
 This is still work in progress.
