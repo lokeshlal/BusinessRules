@@ -10,20 +10,21 @@ namespace BusinessRules.Core
     public class Constants
     {
         #region private fields
-        private static Dictionary<string, Constant> constantCache = new Dictionary<string, Constant>();
+        internal static Dictionary<string, Constant> constantCache = new Dictionary<string, Constant>();
         private static string constantPath = ConfigurationManager.Configuration.ConstantsPath;
         private static Constants instance = null;
         private static readonly object lockObj = new object();
         #endregion
 
         #region .ctor
-        private Constants()
+        static Constants()
         {
             if (!File.Exists(constantPath))
             {
                 XDocument constantsDoc = new XDocument(new XElement("root"));
                 constantsDoc.Save(constantPath);
             }
+            LoadConstants();
         }
 
         public static Constants Instance
@@ -46,6 +47,18 @@ namespace BusinessRules.Core
         #endregion
 
         #region methods
+        public void AddorUpdateConstant<T>(string constantName, T constantValue)
+        {
+            if(constantCache.ContainsKey(constantName))
+            {
+                UpdateConstant<T>(constantName, constantValue);
+            }
+            else
+            {
+                SaveConstant<T>(constantName, constantValue);
+            }
+        }
+
         public void SaveConstant<T>(string constantName, T constantValue)
         {
             AddConstants(new Constant()
@@ -66,7 +79,7 @@ namespace BusinessRules.Core
             });
         }
 
-        public void DeleteConstant<T>(string constantName)
+        public void DeleteConstant(string constantName)
         {
             DeleteConstants(constantName);
         }
@@ -76,6 +89,12 @@ namespace BusinessRules.Core
             var constantNameStr = Convert.ToString(constantName);
             return Convert.ChangeType(constantCache[constantNameStr].ConstantValue
                 , constantCache[constantNameStr].ConstantType);
+        }
+
+        public Constant GetConstantDefinition(object constantName)
+        {
+            var constantNameStr = Convert.ToString(constantName);
+            return constantCache[constantNameStr];
         }
 
         public T GetConstant<T>(object constantName)
@@ -88,7 +107,7 @@ namespace BusinessRules.Core
 
 
         #region private methods
-        private void LoadConstants()
+        private static void LoadConstants()
         {
             if (constantCache.Count > 0) return;
 

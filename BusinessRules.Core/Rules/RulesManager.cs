@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using System.Linq;
 using System;
 using System.Reflection;
+using System.Linq.Expressions;
+using System.Linq.Dynamic;
 
 namespace BusinessRules.Core
 {
@@ -49,23 +51,25 @@ namespace BusinessRules.Core
                 .FirstOrDefault(r => r.Value.RuleName == ruleName);
         }
 
-        // This method could be moved to extension as well, but then we would be writing all rule logic in extension,
-        // which doesn't make any sense
-        public static IEntity ExecuteRule(Rule rule, IEntity entity)
+        public static bool IsRuleExists(string ruleName)
         {
-            bool preConditionResult = EvaluateCondition(rule.RuleCondition, entity);
-            if (preConditionResult)
+            if (rulesCache.ContainsKey(ruleName))
             {
-                foreach (RuleExecution execution in rule.RuleExecution.OrderBy(re => re.Order))
-                {
-                    // left hand side value should always be property in execution
-                    entity.SetProperty(Convert.ToString(execution.OperandLHS.OperandValue),
-                        GetOperandValue(execution.OperandRHS, entity));
-                }
+                return true;
             }
-            return entity;
+            return false;
         }
-
+        public static void AddorUpdateRule(Rule newRule)
+        {
+            if (IsRuleExists(newRule.RuleName))
+            {
+                UpdateRule(newRule);
+            }
+            else
+            {
+                AddRules(newRule);
+            }
+        }
         public static void AddNewRule(Rule newRule)
         {
             AddRules(newRule);
@@ -83,179 +87,71 @@ namespace BusinessRules.Core
         // Execute Rule /  Rules
         #endregion
 
-        #region condition evaluation
-        private static bool EvaluateCondition(RuleCondition condition, IEntity entity)
+        #region rule evaluation
+
+        public static IEntity ExecuteRule(string ruleName, object obj)
         {
-            bool status = false;
-
-            switch (condition.LogicalOperator)
+            Rule rule = GetRuleByName(ruleName).Value;
+            IEntity entity = EntityFacade.ConvertObjectToEntity(obj, rule.EntityName);
+            if (EvaluateCondition(rule, entity))
             {
-                // This is the last level of statement
-                case LogicalOperator.None:
-                    var lhsOperand = GetOperandValue(condition.OperandLHS, entity);
-                    var rhsOperand = GetOperandValue(condition.OperandRHS, entity);
-
-                    // types are not equal
-                    if (lhsOperand.GetType() != rhsOperand.GetType())
-                    {
-                        return false;
-                    }
-
-                    switch (condition.RelationalOperator)
-                    {
-                        case RelationalOperator.Equals: return lhsOperand.Equals(rhsOperand);
-                        case RelationalOperator.GreaterThan: return GreaterThan(lhsOperand, rhsOperand);
-                        case RelationalOperator.GreaterThanOrEqualsTo: return GreaterThanEqualTo(lhsOperand, rhsOperand);
-                        case RelationalOperator.LessThan: return LessThan(lhsOperand, rhsOperand);
-                        case RelationalOperator.LessThanOrEqualsTo: return LessThanEqualTo(lhsOperand, rhsOperand);
-                        case RelationalOperator.NotEquals: return !lhsOperand.Equals(rhsOperand);
-                    }
-                    return false;
-                case LogicalOperator.And:
-                    foreach (RuleCondition subCondition in condition.Conditions)
-                    {
-                        // fail if any one condition fails
-                        if (!EvaluateCondition(subCondition, entity))
-                            return false;
-                    }
-                    return true;
-                case LogicalOperator.Or:
-                    foreach (RuleCondition subCondition in condition.Conditions)
-                    {
-                        // pass if any one condition passes
-                        if (EvaluateCondition(subCondition, entity))
-                            return true;
-                    }
-                    return false;
+                return ExecuteRuleExecutions(rule, entity);
             }
+            return entity;
+        }
+        public static IEntity ExecuteRule(string ruleName, IEntity entity)
+        {
+            Rule rule = GetRuleByName(ruleName).Value;
+            if (EvaluateCondition(rule, entity))
+            {
+                return ExecuteRuleExecutions(rule, entity);
+            }
+            return entity;
+        }
 
-            return status;
+        public static IEntity ExecuteRuleGroup(string ruleGroupName, IEntity entity)
+        {
+            List<Rule> rules = GetRulesInGroup(ruleGroupName).Select(r => r.Value).ToList(); ;
+            rules = rules.OrderByDescending(r => r.Priority).ToList();
+            foreach (Rule rule in rules)
+            {
+                entity = ExecuteRule(rule.RuleName, entity);
+            }
+            return entity;
+        }
+        private static bool EvaluateCondition(Rule rule, IEntity entity)
+        {
+            bool result = false;
+            string expression = rule.RuleCondition;
+            var entityParameter = Expression.Parameter(entity.GetType(), rule.EntityName);
+            var methodParameter = Expression.Parameter(BasicMethodsManager.BasicMethodsManagerType, "M");
+            var expressionToCompile = System.Linq.Dynamic.DynamicExpression.ParseLambda(new[] { entityParameter, methodParameter }, typeof(bool), expression);
+            result = (bool)expressionToCompile.Compile().DynamicInvoke(entity, BasicMethodsManager.BasicMethodsManagerInstance);
+            return result;
+        }
+
+        // This method could be moved to extension as well, but then we would be writing all rule logic in extension,
+        // which doesn't make any sense
+        private static IEntity ExecuteRuleExecutions(Rule rule, IEntity entity)
+        {
+            List<RuleExecution> executions = rule.RuleExecution.OrderBy(execution => execution.Order).ToList();
+
+            foreach (var execution in executions)
+            {
+                Type propertyType = entity.GetPropertyType(execution.PropertyName);
+                string expression = execution.Execution;
+                var entityParameter = Expression.Parameter(entity.GetType(), rule.EntityName);
+                var methodParameter = Expression.Parameter(BasicMethodsManager.BasicMethodsManagerType, "M");
+                var expressionToCompile = System.Linq.Dynamic.DynamicExpression.ParseLambda(new[] { entityParameter, methodParameter }, propertyType, expression);
+                var result = expressionToCompile.Compile().DynamicInvoke(entity, BasicMethodsManager.BasicMethodsManagerInstance);
+                entity.SetProperty(execution.PropertyName, result);
+            }
+            return entity;
         }
 
         #endregion
 
         #region private methods
-
-        private static bool GreaterThan(object lhsOperand, object rhsOperand)
-        {
-            if (PrimitiveTypes.Test(lhsOperand.GetType()) && PrimitiveTypes.Test(rhsOperand.GetType()))
-            {
-                switch (lhsOperand.GetType().FullName.ToLower())
-                {
-                    case "system.int32": return Convert.ToInt32(lhsOperand) > Convert.ToInt32(rhsOperand);
-                    case "system.datetime": return Convert.ToDateTime(lhsOperand) > Convert.ToDateTime(rhsOperand);
-                    case "system.int64": return Convert.ToInt64(lhsOperand) > Convert.ToInt64(rhsOperand);
-                    case "system.long": return Convert.ToInt64(lhsOperand) > Convert.ToInt64(rhsOperand);
-                    case "system.double": return Convert.ToDouble(lhsOperand) > Convert.ToDouble(rhsOperand);
-                    case "system.decimal": return Convert.ToDecimal(lhsOperand) > Convert.ToDecimal(rhsOperand);
-                    case "system.char": return Convert.ToChar(lhsOperand) > Convert.ToChar(rhsOperand);
-                    case "system.single": return Convert.ToSingle(lhsOperand) > Convert.ToSingle(rhsOperand);
-                    case "system.sbyte": return Convert.ToSByte(lhsOperand) > Convert.ToSByte(rhsOperand); ;
-                    case "system.uint16": return Convert.ToUInt16(lhsOperand) > Convert.ToUInt16(rhsOperand);
-                    case "system.uint32": return Convert.ToUInt32(lhsOperand) > Convert.ToUInt32(rhsOperand);
-                    case "system.uint64": return Convert.ToUInt64(lhsOperand) > Convert.ToUInt64(rhsOperand);
-                }
-                throw new Exception(string.Format("Type not compatibale for {0} comparision operation", "Greater than"));
-            }
-            else {
-                return false;
-            }
-        }
-
-        private static bool GreaterThanEqualTo(object lhsOperand, object rhsOperand)
-        {
-            if (PrimitiveTypes.Test(lhsOperand.GetType()) && PrimitiveTypes.Test(rhsOperand.GetType()))
-            {
-                switch (lhsOperand.GetType().FullName.ToLower())
-                {
-                    case "system.int32": return Convert.ToInt32(lhsOperand) >= Convert.ToInt32(rhsOperand);
-                    case "system.datetime": return Convert.ToDateTime(lhsOperand) >= Convert.ToDateTime(rhsOperand);
-                    case "system.int64": return Convert.ToInt64(lhsOperand) >= Convert.ToInt64(rhsOperand);
-                    case "system.long": return Convert.ToInt64(lhsOperand) >= Convert.ToInt64(rhsOperand);
-                    case "system.double": return Convert.ToDouble(lhsOperand) >= Convert.ToDouble(rhsOperand);
-                    case "system.decimal": return Convert.ToDecimal(lhsOperand) >= Convert.ToDecimal(rhsOperand);
-                    case "system.char": return Convert.ToChar(lhsOperand) >= Convert.ToChar(rhsOperand);
-                    case "system.single": return Convert.ToSingle(lhsOperand) >= Convert.ToSingle(rhsOperand);
-                    case "system.sbyte": return Convert.ToSByte(lhsOperand) >= Convert.ToSByte(rhsOperand); ;
-                    case "system.uint16": return Convert.ToUInt16(lhsOperand) >= Convert.ToUInt16(rhsOperand);
-                    case "system.uint32": return Convert.ToUInt32(lhsOperand) >= Convert.ToUInt32(rhsOperand);
-                    case "system.uint64": return Convert.ToUInt64(lhsOperand) >= Convert.ToUInt64(rhsOperand);
-                }
-                throw new Exception(string.Format("Type not compatibale for {0} comparision operation", "Greater than"));
-            }
-            else {
-                return false;
-            }
-        }
-
-        private static bool LessThan(object lhsOperand, object rhsOperand)
-        {
-            if (PrimitiveTypes.Test(lhsOperand.GetType()) && PrimitiveTypes.Test(rhsOperand.GetType()))
-            {
-                switch (lhsOperand.GetType().FullName.ToLower())
-                {
-                    case "system.int32": return Convert.ToInt32(lhsOperand) < Convert.ToInt32(rhsOperand);
-                    case "system.datetime": return Convert.ToDateTime(lhsOperand) < Convert.ToDateTime(rhsOperand);
-                    case "system.int64": return Convert.ToInt64(lhsOperand) < Convert.ToInt64(rhsOperand);
-                    case "system.long": return Convert.ToInt64(lhsOperand) < Convert.ToInt64(rhsOperand);
-                    case "system.double": return Convert.ToDouble(lhsOperand) < Convert.ToDouble(rhsOperand);
-                    case "system.decimal": return Convert.ToDecimal(lhsOperand) < Convert.ToDecimal(rhsOperand);
-                    case "system.char": return Convert.ToChar(lhsOperand) < Convert.ToChar(rhsOperand);
-                    case "system.single": return Convert.ToSingle(lhsOperand) < Convert.ToSingle(rhsOperand);
-                    case "system.sbyte": return Convert.ToSByte(lhsOperand) < Convert.ToSByte(rhsOperand); ;
-                    case "system.uint16": return Convert.ToUInt16(lhsOperand) < Convert.ToUInt16(rhsOperand);
-                    case "system.uint32": return Convert.ToUInt32(lhsOperand) < Convert.ToUInt32(rhsOperand);
-                    case "system.uint64": return Convert.ToUInt64(lhsOperand) < Convert.ToUInt64(rhsOperand);
-                }
-                throw new Exception(string.Format("Type not compatibale for {0} comparision operation", "Greater than"));
-            }
-            else {
-                return false;
-            }
-        }
-
-        private static bool LessThanEqualTo(object lhsOperand, object rhsOperand)
-        {
-            if (PrimitiveTypes.Test(lhsOperand.GetType()) && PrimitiveTypes.Test(rhsOperand.GetType()))
-            {
-                switch (lhsOperand.GetType().FullName.ToLower())
-                {
-                    case "system.int32": return Convert.ToInt32(lhsOperand) <= Convert.ToInt32(rhsOperand);
-                    case "system.datetime": return Convert.ToDateTime(lhsOperand) <= Convert.ToDateTime(rhsOperand);
-                    case "system.int64": return Convert.ToInt64(lhsOperand) <= Convert.ToInt64(rhsOperand);
-                    case "system.long": return Convert.ToInt64(lhsOperand) <= Convert.ToInt64(rhsOperand);
-                    case "system.double": return Convert.ToDouble(lhsOperand) <= Convert.ToDouble(rhsOperand);
-                    case "system.decimal": return Convert.ToDecimal(lhsOperand) <= Convert.ToDecimal(rhsOperand);
-                    case "system.char": return Convert.ToChar(lhsOperand) <= Convert.ToChar(rhsOperand);
-                    case "system.single": return Convert.ToSingle(lhsOperand) <= Convert.ToSingle(rhsOperand);
-                    case "system.sbyte": return Convert.ToSByte(lhsOperand) <= Convert.ToSByte(rhsOperand); ;
-                    case "system.uint16": return Convert.ToUInt16(lhsOperand) <= Convert.ToUInt16(rhsOperand);
-                    case "system.uint32": return Convert.ToUInt32(lhsOperand) <= Convert.ToUInt32(rhsOperand);
-                    case "system.uint64": return Convert.ToUInt64(lhsOperand) <= Convert.ToUInt64(rhsOperand);
-                }
-                throw new Exception(string.Format("Type not compatibale for {0} comparision operation", "Greater than"));
-            }
-            else {
-                return false;
-            }
-        }
-
-        private static object GetOperandValue(Operand operand, IEntity entity)
-        {
-            switch (operand.OperandType)
-            {
-                case OperandValueType.Constant:
-                    return Constants.Instance.GetConstant(operand.OperandValue);
-                case OperandValueType.Value:
-                    return Convert.ChangeType(operand.OperandValue, TypeHandler.GetType(operand.Type));
-                case OperandValueType.Property:
-                    return entity.GetProperty(operand.OperandValue);
-                case OperandValueType.CustomMethod:
-                    MethodInfo methodInfo = BasicMethodsManager.GetMethod(operand.OperandValue);
-                    return methodInfo.Invoke(null, new object[] { operand.MethodParameters, entity });
-            }
-            return null;
-        }
 
         private static void AddRules(Rule rule)
         {

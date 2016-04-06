@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace BusinessRules.Core
 {
@@ -46,6 +47,12 @@ namespace BusinessRules.Core
         public static IEntity GetType(string entityName)
         {
             return GetTypeObject(entityName);
+        }
+
+        public static IEntity ConvertObjectToEntity(object obj, string entityName)
+        {
+            IEntity entity = (IEntity)((Newtonsoft.Json.Linq.JObject)obj).ToObject(typeCache[entityName]); ;
+            return entity;
         }
 
         public static bool IsEntityExists(string entityName)
@@ -135,7 +142,7 @@ namespace BusinessRules.Core
             SaveEntities(xDoc);
         }
 
-        
+
 
 
         private static void LoadEntities()

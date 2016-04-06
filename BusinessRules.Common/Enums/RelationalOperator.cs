@@ -2,17 +2,17 @@
 {
     public enum RelationalOperator
     {
-        [Operator("Equals to")]
+        [Operator("==")]
         Equals,
-        [Operator("Not equals to")]
+        [Operator("!=")]
         NotEquals,
-        [Operator("Greater than")]
+        [Operator(">")]
         GreaterThan,
-        [Operator("Less than")]
+        [Operator("<")]
         LessThan,
-        [Operator("Greater than or equals to")]
+        [Operator(">=")]
         GreaterThanOrEqualsTo,
-        [Operator("Less than or equals to")]
+        [Operator("<=")]
         LessThanOrEqualsTo
     }
 }

@@ -8,7 +8,7 @@ namespace BusinessRules.Common
         public string EntityName { get; set; }
         public string RuleGroup { get; set; }
         public int Priority { get; set; }
-        public RuleCondition RuleCondition { get; set; }
+        public string RuleCondition { get; set; }
         public List<RuleExecution> RuleExecution { get; set; }
     }
 }

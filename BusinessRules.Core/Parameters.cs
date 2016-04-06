@@ -28,6 +28,17 @@ namespace BusinessRules.Core
             return availableDataTypes;
         }
 
+        public static Dictionary<string, string> AvialablePrimitiveDataTypes()
+        {
+            Dictionary<string, string> availableDataTypes = new Dictionary<string, string>();
+
+            // Adding primitive types
+            availableDataTypes.Add("Integer", PrimitiveTypes.GetNameByType(typeof(int)));
+            availableDataTypes.Add("String", PrimitiveTypes.GetNameByType(typeof(string)));
+
+            return availableDataTypes;
+        }
+
         public static List<string> AvialableFacts()
         {
             return EntityFacade.typeCache.Keys.ToList();
@@ -39,9 +50,14 @@ namespace BusinessRules.Core
         }
 
 
-        public static Dictionary<string, int> AvialableMethods()
+        public static Dictionary<string, string> AvialableMethods()
         {
             return BasicMethodsManager.GetAllMethodNames();
+        }
+
+        public static List<string> AvialableConstants()
+        {
+            return Constants.constantCache.Keys.ToList();
         }
 
         public static Dictionary<string, string> AvialableRelationalConditions()

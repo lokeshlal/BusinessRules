@@ -10,9 +10,39 @@ namespace BusinessRules.Core
     public class BasicMethodsManager
     {
         public static Dictionary<string, Assembly> methodLibraryCaches = new Dictionary<string, Assembly>();
-        public static Dictionary<string, int> methodNamesCache = new Dictionary<string, int>();
+        public static Dictionary<string, string> methodNamesCache = new Dictionary<string, string>();
         public static string methodsFolder = ConfigurationManager.Configuration.BasicMethodsPath; //"libraries";
+        public static Type BasicMethodsManagerType
+        {
+            get
+            {
+                foreach (KeyValuePair<string, Assembly> kvp in methodLibraryCaches)
+                {
+                    foreach (Type t in kvp.Value.GetTypes())
+                    {
+                        MethodInfo[] methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                        foreach (MethodInfo method in methods)
+                        {
+                            Attribute[] attributes = Attribute.GetCustomAttributes(method);
+                            if (attributes.Select(a => a is HelperMethodAttribute).Count() > 0
+                                && method.GetCustomAttribute(typeof(HelperMethodAttribute)) != null)
+                            {
+                                return t;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+        }
 
+        public static object BasicMethodsManagerInstance
+        {
+            get
+            {
+                return Activator.CreateInstance(BasicMethodsManagerType);
+            }
+        }
         static BasicMethodsManager()
         {
             if (methodLibraryCaches.Count == 0)
@@ -28,24 +58,28 @@ namespace BusinessRules.Core
             }
         }
 
-        public static Dictionary<string, int> GetAllMethodNames()
+        public static Dictionary<string, string> GetAllMethodNames()
         {
             if (methodNamesCache.Count == 0)
             {
-                Dictionary<string, int> methodNames = new Dictionary<string, int>();
+                Dictionary<string, string> methodNames = new Dictionary<string, string>();
                 foreach (KeyValuePair<string, Assembly> kvp in methodLibraryCaches)
                 {
                     foreach (Type t in kvp.Value.GetTypes())
                     {
-                        MethodInfo[] methods = t.GetMethods(BindingFlags.Static | BindingFlags.Public);
+                        MethodInfo[] methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                         foreach (MethodInfo method in methods)
                         {
                             Attribute[] attributes = Attribute.GetCustomAttributes(method);
-                            if (attributes.Select(a => a is HelperMethodAttribute).Count() > 0)
+                            if (attributes.Select(a => a is HelperMethodAttribute).Count() > 0
+                                && method.GetCustomAttribute(typeof(HelperMethodAttribute)) != null)
                             {
 
-                                methodNames.Add(string.Format("[{0}][{1}][{2}]", kvp.Key, t.FullName, method.Name),
-                                    ((HelperMethodAttribute)method.GetCustomAttribute(typeof(HelperMethodAttribute))).NoOfParameters);
+                                //methodNames.Add(string.Format("[{0}][{1}][{2}]", kvp.Key, t.FullName, method.Name),
+                                //methodNames.Add(((HelperMethodAttribute)method.GetCustomAttribute(typeof(HelperMethodAttribute))).DisplayName,
+                                methodNames.Add(method.Name,
+                                    ((HelperMethodAttribute)method.GetCustomAttribute(typeof(HelperMethodAttribute))).ParametersString);
+                                //((HelperMethodAttribute)method.GetCustomAttribute(typeof(HelperMethodAttribute))).NoOfParameters);
                             }
                         }
                     }
@@ -64,14 +98,15 @@ namespace BusinessRules.Core
             // Add new methods to method names cache
             foreach (Type t in assembly.GetTypes())
             {
-                MethodInfo[] methods = t.GetMethods(BindingFlags.Static | BindingFlags.Public);
+                MethodInfo[] methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                 foreach (MethodInfo method in methods)
                 {
                     Attribute[] attributes = Attribute.GetCustomAttributes(method);
-                    if (attributes.Select(a => a is HelperMethodAttribute).Count() > 0)
+                    if (attributes.Select(a => a is HelperMethodAttribute).Count() > 0
+                        && method.GetCustomAttribute(typeof(HelperMethodAttribute)) != null)
                     {
-                        methodNamesCache.Add(string.Format("[{0}][{1}][{2}]", assemblyPath, t.FullName, method.Name),
-                            method.GetParameters().Count());
+                        methodNamesCache.Add(method.Name,
+                            ((HelperMethodAttribute)method.GetCustomAttribute(typeof(HelperMethodAttribute))).ParametersString);
                     }
                 }
             }

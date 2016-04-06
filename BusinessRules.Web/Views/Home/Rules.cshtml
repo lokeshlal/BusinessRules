@@ -31,7 +31,7 @@
             </table>
         </div>
     </div>
-    <div class="col-lg-7 hidden" id="factDetails">
+    <div class="col-lg-6 hidden" id="ruleDetails" style="margin-bottom: 100px;">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>Rule:</strong> <span id="ruleNameLbl">rule name</span>
@@ -39,28 +39,202 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-10">
-                        <form role="form" method="post">
-                            <div>
-                                <a href="#" id="btnAddNewField">Add</a>
-                            </div>
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Rule Name</th>
-                                        <th>Field Type</th>
-                                        <th>Edit Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="factFields"></tbody>
-                            </table>
+                        <div class="form-group">
+                            <label>Entity Name:</label>
+                            <input class="form-control" id="entityName" name="entityName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority:</label>
+                            <input class="form-control" id="priority" name="priority">
+                        </div>
+                        <div class="form-group">
+                            <label>Rule Group:</label>
+                            <input class="form-control" id="ruleGroup" name="ruleGroup">
+                        </div>
 
-                            <button id="btnSaveFact" type="button" class="btn btn-default">Save</button>
-                            <button id="btnCancelFact" type="button" class="btn btn-default">Cancel</button>
-                        </form>
+                        <div class="clearfix" style="margin-bottom: 10px;"></div>
+                        <strong>If:</strong>
+                        <div id="condition" name="condition" contenteditable="true" onkeydown="return keydown(event);" onblur="activeDiv(this);" style="border: 1px solid lightgray; min-height: 75px;">
+
+                        </div>
+                        <div class="clearfix" style="margin-bottom: 10px;"></div>
+                        <strong>Then:</strong><button type="button" onclick="addExecution()" class="btn btn-default">+</button>
+                        <div class="executionContainer" style="min-height: 75px;">
+                            <div class="ruleexecution">
+                                <div class="form-group">
+                                    <label>Property:</label>
+                                    <div class="propertyContainer"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Order:</label>
+                                    <input class="form-control order">
+                                </div>
+                                <div contenteditable="true" class="executionDiv" onkeydown="return keydown(event);" onblur="activeDiv(this);" style="border: 1px solid lightgray; min-height: 75px; margin-bottom: 10px;"></div>
+                            </div>
+                        </div>
+
+                        <button id="btnSaveRule" type="button" class="btn btn-default">Save</button>
+                        <button id="btnCancelRule" type="button" class="btn btn-default">Cancel</button>
+
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="controlsHolder" style="position: fixed;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    background-color: aliceblue; overflow:auto;">
+        <div class="panel-group" id="accordion">
+            @*<div id="conditionControls" style="padding-top: 50px;" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#conditionCollapse">
+                                Conditions
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="conditionCollapse" class="panel-collapse collapse">
+                        <button type="button" class="btn btn-info" style="display:block; font-size: 12px; margin-bottom: 2px;" data-value="{}">Add Condition</button>
+                    </div>
+                </div>*@
+
+            <div id="logicalControls" style="padding-top: 50px;" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#logicalCollapse">
+                            Logical Operators
+                        </a>
+                    </h4>
+                </div>
+                <div id="logicalCollapse" class="panel-collapse collapse in">
+                    @foreach (var lOp in BusinessRules.Core.Parameters.AvialableLogicalConditions())
+                    {
+                        if (lOp.Key == "None") { continue; }
+                        <button type="button" class="btn btn-info" style="display:block; font-size: 12px; margin-bottom: 2px;" data-value="@lOp.Value.ToUpper()">@lOp.Key</button>
+                    }
+                </div>
+            </div>
+
+            <div id="relationalControls" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#relCollapse">
+                            Relational Operators
+                        </a>
+                    </h4>
+                </div>
+                <div id="relCollapse" class="panel-collapse collapse">
+                    @foreach (var lOp in BusinessRules.Core.Parameters.AvialableRelationalConditions())
+                    {
+                        <button type="button" class="btn btn-info" style="display:block; font-size: 12px; margin-bottom: 2px;" data-value="@lOp.Key">@lOp.Key</button>
+                    }
+                </div>
+            </div>
+
+            <div id="customMethodsControls" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#customMethodCollapse">
+                            Custom Methods
+                        </a>
+                    </h4>
+                </div>
+                <div id="customMethodCollapse" class="panel-collapse collapse">
+                    @foreach (var lOp in BusinessRules.Core.Parameters.AvialableMethods())
+                    {
+                        <button type="button" class="btn btn-info" style="display:block; font-size: 12px; margin-bottom: 2px;" data-value="M.@lOp.Key (@lOp.Value)">@lOp.Key (@lOp.Value)</button>
+                    }
+                </div>
+            </div>
+
+            <div id="propertiesControls" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#propertiesCollapse">
+                            Properties
+                        </a>
+                    </h4>
+                </div>
+                <div id="propertiesCollapse" class="panel-collapse collapse">
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="new-rule-modal" tabindex="-1" role="dialog" aria-labelledby="New Fact" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="Login">New Rule</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Rule Name:</label>
+                    <input class="form-control" id="ruleName" name="ruleName">
+                </div>
+                <div class="form-group">
+                    <label>Rule Fact:</label>
+                    <select class="form-control" id="ruleFact" name="ruleFact">
+                        @foreach (string fact in Helper.AvailableFacts)
+                        {
+                            <option value="@fact">@fact</option>
+                        }
+                    </select>
+                </div>
+                <p class="text-center">
+                    <button id="btnAddRuleModel" class="btn btn-primary"><i class="fa fa-sign-in"></i> Add</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hidden">
+    <div id="logicalOperatorMaster">
+        @foreach (var lOp in BusinessRules.Core.Parameters.AvialableLogicalConditions())
+        {
+            <value value="@lOp.Value">@lOp.Key</value>
+        }
+    </div>
+
+    <div id="relationalOperatorMaster">
+        @foreach (var lOp in BusinessRules.Core.Parameters.AvialableRelationalConditions())
+        {
+            <value value="@lOp.Value">@lOp.Key</value>
+        }
+    </div>
+
+    <div id="arithmeticOperatorMaster">
+        @foreach (var lOp in BusinessRules.Core.Parameters.AvialableArithmeticConditions())
+        {
+            <value value="@lOp.Value">@lOp.Key</value>
+        }
+    </div>
+
+    <div id="operandValueMaster">
+        @foreach (var lOp in BusinessRules.Core.Parameters.AvialableOperandValueType())
+        {
+            <value value="@lOp.Value">@lOp.Key</value>
+        }
+    </div>
+
+    <div id="methodsMater">
+        @foreach (var lOp in BusinessRules.Core.Parameters.AvialableMethods())
+        {
+            <value value="@lOp.Value">@lOp.Key</value>
+        }
+    </div>
+
+    <div id="properties">
+        @*render fact json here*@
+    </div>
+</div>
+
+<script src="~/Scripts/rulecontainer.js"></script>

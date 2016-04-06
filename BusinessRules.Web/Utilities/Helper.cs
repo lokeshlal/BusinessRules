@@ -19,5 +19,13 @@ namespace BusinessRules.Web
                 return Core.Parameters.AvialableRules();
             }
         }
+
+        public static List<string> AvailableConstants
+        {
+            get
+            {
+                return Core.Parameters.AvialableConstants();
+            }
+        }
     }
 }

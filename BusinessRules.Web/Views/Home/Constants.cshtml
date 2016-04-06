@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="table-responsive">
+            <div>
+                <a href="#" onclick="addNewConstant();">Add</a>
+            </div>
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Rule Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (string constant in Helper.AvailableConstants)
+                    {
+                        <tr>
+                            <td>@constant</td>
+                            <td>
+                                <button type="button" onclick="editConstant(this);" class="btn btn-link editFact">Edit</button>
+                                <button type="button" onclick="deleteConstant(this);" class="btn btn-link deleteFact">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-7 hidden" id="constantDetails">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <form role="form" method="post">
+                        <div class="form-group">
+                            <label>Constant Name:</label>
+                            <input class="form-control" id="constantName" name="constantName">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Constant Value:</label>
+                            <input class="form-control" id="constantValue" name="constantValue">
+                        </div>
+                        <div class="form-group">
+                            <label>Constant Type:</label>
+                            <select class="form-control" id="constantType" name="constantType">
+                                <option value="System.Int32">Integer</option>
+                                <option value="System.String">String</option>
+                            </select>
+                        </div>
+
+                        <button id="btnSaveConstant" type="button" class="btn btn-default">Save</button>
+                        <button id="btnCancelConstant" type="button" class="btn btn-default">Cancel</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/constants.js"></script>
+

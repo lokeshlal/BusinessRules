@@ -2,8 +2,8 @@
 {
     public class RuleExecution
     {
-        public Operand OperandLHS { get; set; }
-        public Operand OperandRHS { get; set; }
+        public string PropertyName { get; set; }
+        public string Execution { get; set; }
         public int Order { get; set; }
     }
 }

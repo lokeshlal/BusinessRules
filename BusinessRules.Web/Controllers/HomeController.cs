@@ -13,5 +13,15 @@ namespace BusinessRules.Web.Controllers
         {
             return View();
         }
+
+        public ActionResult Constants()
+        {
+            return View();
+        }
+
+        public ActionResult Workflows()
+        {
+            return View();
+        }
     }
 }
