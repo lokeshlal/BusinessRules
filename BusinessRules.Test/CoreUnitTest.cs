@@ -11,6 +11,14 @@ namespace BusinessRules.Test
     [TestClass]
     public class CoreUnitTest
     {
+        [TestInitialize]
+        public void Setup()
+        {
+            ConfigurationManager.Configuration = new ConfigurationManager();
+            ConfigurationManager.Configuration.BasicMethodsPath = @"e:\basicmethods";
+            ConfigurationManager.Configuration.EntitiesPath = @"e:\entities.xml";
+            ConfigurationManager.Configuration.RulesPath = @"e:\rules.xml";
+        }
         #region Entity
         [TestMethod]
         public void GetEntityObjectTest()
