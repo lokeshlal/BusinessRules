@@ -70,7 +70,7 @@ Property = Name, Order = 2 and rule execution should look like this
 Person.Name + "Updated"
 ```
 
-#### For example:
+#### Rules example:
 
 In below screenshot M.Multiply is custom method which accepts 2 int type parameter
 
