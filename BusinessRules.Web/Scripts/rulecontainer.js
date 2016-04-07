@@ -166,6 +166,10 @@ $('#btnAddRuleModel').click(function () {
     });
 })
 
+$('#btnCancelRule').click(function () {
+    window.location.href = window.location.href;
+});
+
 $('#btnSaveRule').click(function () {
     var ruleExecutions = [];
 
