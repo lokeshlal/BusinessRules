@@ -20,7 +20,7 @@ Pending Items:
 ```
 First parameter is dummy name, second is number of parameter this function accepts and third is type of parameters this method accepts.
 
-# End points
+# Rest End points
 BusinessRules.Console project shows a sample usage of how to execute rules via rest call.
 There are 2 end points to execute rules
 1. api/async/executerule - To execute a single rule
