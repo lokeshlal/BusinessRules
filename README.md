@@ -50,7 +50,7 @@ To write a rule condition where age is between 20 and 30
 
 Now to add the execution (Action) part
 
-first assign a property to the action and its order of execution as well (because a single rule can have multiple actions)
+First assign a property to the action and its order of execution as well (because a single rule can have multiple actions)
 
 Now lets say if above condition is true, then we have to multiple age by 2 and concatenate "Updated" in the Name.
 
@@ -58,18 +58,14 @@ So we will add 2 executions to rule.
 
 First one would look like this
 
-Property = Age
-Order = 1
-and rule execution should look like this
+Property = Age, Order = 1 and rule execution should look like this
 ```
 Person.Age * 2
 ```
 
 Second would look like this
 
-Property = Name
-Order = 2
-and rule execution should look like this
+Property = Name, Order = 2 and rule execution should look like this
 ```
 Person.Name + "Updated"
 ```
