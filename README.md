@@ -9,6 +9,3 @@ Simple Business Rules
 Pending Items:
 
 1. Add more test cases
-2. Validations
-
-This is still work in progress.
