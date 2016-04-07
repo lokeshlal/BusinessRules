@@ -74,4 +74,4 @@ Person.Name + "Updated"
 
 In below screenshot M.Multiply is custom method which accepts 2 int type parameter
 
-![Alt text](https://github.com/lokeshlal/BusinessRules/blob/master/rules_demo.png "rules")
+![Alt text](https://raw.githubusercontent.com/lokeshlal/BusinessRules/master/rules_demo.png "rules")
