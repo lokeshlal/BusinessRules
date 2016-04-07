@@ -69,3 +69,9 @@ Property = Name, Order = 2 and rule execution should look like this
 ```
 Person.Name + "Updated"
 ```
+
+For example:
+
+In below screenshot M.Multiply is custom method
+
+![Alt text](https://github.com/lokeshlal/BusinessRules/blob/master/rules_demo.png "rules")
