@@ -23,6 +23,7 @@ First parameter is dummy name, second is number of parameter this function accep
 # Rest End points
 BusinessRules.Console project shows a sample usage of how to execute rules via rest call.
 There are 2 end points to execute rules
+
 1. api/async/executerule - To execute a single rule
 2. api/async/executerulegroup - To execute set of rules with in a same rule group
 
