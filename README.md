@@ -13,7 +13,7 @@ Pending Items:
 # How to add custom methods
 
 1. All custom methods should be added in BusinessRules.BasicMethodsLibrary class library project
-2. All custom methods should be part of class "BasicMethods" and should be in namespace "M". As this is the pattern used in "Core" to identify the custom methods
+2. All custom methods should be part of class "BasicMethods" and should be in namespace "M". As this is the pattern used in "Core" to identify the custom methods. So new set of methods can be added to existing class or a new partial class file can be created.
 3. HelperMethod attribute should be present with all custom methods for example
 ```c#
 [HelperMethod("StringConcatenate", 2, "string, string")]
