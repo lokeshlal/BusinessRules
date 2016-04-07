@@ -10,6 +10,12 @@ namespace BusinessRules.Web.Controllers
 {
     public class AsyncController : ApiController
     {
+        #region private methods
+        private bool NullString(string str)
+        {
+            return string.IsNullOrWhiteSpace(str);
+        }
+        #endregion
         #region fact
         [HttpPost]
         public string AddUpdateFact(JObject factDefinition)
@@ -18,10 +24,14 @@ namespace BusinessRules.Web.Controllers
             //var o = JsonConvert.DeserializeObject<FactDefinition>(factDefinition);
 
             EntityDefinition entity = new EntityDefinition();
+            if (NullString(o.factName))
+                return "false";
             entity.EntityName = o.factName;
             entity.EntityFields = new List<EntityFieldDefinition>();
             foreach (var field in o.fields)
             {
+                if (NullString(field.fieldName) || NullString(field.fieldType))
+                    return "false";
                 entity.EntityFields.Add(new EntityFieldDefinition()
                 {
                     FieldName = field.fieldName,
@@ -38,6 +48,9 @@ namespace BusinessRules.Web.Controllers
         public string GetEntityDefinition(JObject entityName)
         {
             string entityNameStr = entityName.ToObject<Name>().name;
+            if (NullString(entityNameStr))
+                return "false";
+
             EntityDefinition entity = EntityFacade.GetEntityDefinition(entityNameStr);
 
             FactDefinition factDefinition = new FactDefinition();
@@ -60,12 +73,15 @@ namespace BusinessRules.Web.Controllers
         public string DeleteEntity(JObject entityName)
         {
             string entityNameStr = entityName.ToObject<Name>().name;
+            if (NullString(entityNameStr))
+                return "false";
+
             EntityFacade.DeleteEntity(entityNameStr);
             return "true";
         }
         #endregion
 
-        #region constants
+        #region constants /* not using as of now */
         [HttpPost]
         public string AddUpdateConstant(JObject constantDefinition)
         {
@@ -117,6 +133,12 @@ namespace BusinessRules.Web.Controllers
         {
             var o = ruleDefinition.ToObject<RuleDefinition>();
 
+            if (NullString(o.entityName) 
+                || NullString(o.ruleName)
+                || NullString(o.ruleCondition)
+                || NullString(o.ruleGroup))
+                return "false";
+
             Rule rule = new Rule()
             {
                 EntityName = o.entityName,
@@ -128,6 +150,10 @@ namespace BusinessRules.Web.Controllers
             rule.RuleExecution = new List<RuleExecution>();
             foreach (var ruleExecution in o.ruleExecution)
             {
+                if (NullString(ruleExecution.propertyName)
+                || NullString(ruleExecution.execution))
+                    return "false";
+
                 rule.RuleExecution.Add(new RuleExecution()
                 {
                     PropertyName = ruleExecution.propertyName,
@@ -145,6 +171,8 @@ namespace BusinessRules.Web.Controllers
         public string GetRuleDefinition(JObject ruleName)
         {
             string ruleNameStr = ruleName.ToObject<Name>().name;
+            if (NullString(ruleNameStr))
+                return "false";
             Rule rule = RulesManager.GetRuleByName(ruleNameStr).Value;
 
             RuleDefinition ruleDefinition = new RuleDefinition()
@@ -173,6 +201,9 @@ namespace BusinessRules.Web.Controllers
         public string DeleteRule(JObject ruleName)
         {
             string ruleNameStr = ruleName.ToObject<Name>().name;
+            if (NullString(ruleNameStr))
+                return "false";
+
             RulesManager.DeleteRule(ruleNameStr);
             return "true";
         }

@@ -35,7 +35,16 @@ var deleteFact = function (ele) {
         contentType: 'application/json; charset=UTF-8',
         dataType: 'json',
         success: function (res) {
-            
+            if(res == "true")
+            {
+                window.location.href = window.location.href;
+                return;
+            }
+            else
+            {
+                alert("Error occured. Please check.")
+                return;
+            }
         }
     });
 
@@ -64,6 +73,10 @@ var editFact = function (ele) {
         contentType: 'application/json; charset=UTF-8',
         dataType: 'json',
         success: function (res) {
+            if (res == "false") {
+                alert("Error occured. Please check.");
+                return;
+            }
             var factDefinition = JSON.parse(res);
 
             $.each(factDefinition.fields, function (index, val) {
@@ -139,7 +152,12 @@ $('#btnSaveFact').click(function () {
         cache: false,
         success: function (res) {
             if (res == "true") {
-                alert('done');
+                window.location.href = window.location.href;
+                return;
+            }
+            else {
+                alert("Error occured. Please check.")
+                return;
             }
         }
     })

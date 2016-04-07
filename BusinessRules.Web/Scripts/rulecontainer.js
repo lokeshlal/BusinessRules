@@ -34,7 +34,14 @@ var deleteRule = function (ele) {
         contentType: 'application/json; charset=UTF-8',
         dataType: 'json',
         success: function (res) {
-
+            if (res == "true") {
+                window.location.href = window.location.href;
+                return;
+            }
+            else {
+                alert("Error occured. Please check.")
+                return;
+            }
         }
     });
 
@@ -57,6 +64,11 @@ var editRule = function (ele) {
         contentType: 'application/json; charset=UTF-8',
         dataType: 'json',
         success: function (res) {
+            if (res == "false") {
+                alert("Error occured. Please check.")
+                return;
+            }
+
             ruleDefinition = JSON.parse(res);
 
             var factName = ruleDefinition.entityName;
@@ -69,6 +81,11 @@ var editRule = function (ele) {
                 contentType: 'application/json; charset=UTF-8',
                 dataType: 'json',
                 success: function (res1) {
+                    if (res1 == "false") {
+                        alert("Error occured. Please check.")
+                        return;
+                    }
+
                     factDefinition = JSON.parse(res1);
 
                     $('#propertiesCollapse').html('');
@@ -127,6 +144,10 @@ $('#btnAddRuleModel').click(function () {
         contentType: 'application/json; charset=UTF-8',
         dataType: 'json',
         success: function (res) {
+            if (res == "false") {
+                alert("Error occured. Please check.")
+                return;
+            }
             factDefinition = JSON.parse(res);
 
             $('#propertiesCollapse').html('');
@@ -172,7 +193,12 @@ $('#btnSaveRule').click(function () {
         cache: false,
         success: function (res) {
             if (res == "true") {
-                alert('done');
+                window.location.href = window.location.href;
+                return;
+            }
+            else {
+                alert("Error occured. Please check.")
+                return;
             }
         }
     })
