@@ -70,8 +70,8 @@ Property = Name, Order = 2 and rule execution should look like this
 Person.Name + "Updated"
 ```
 
-For example:
+#### For example:
 
-In below screenshot M.Multiply is custom method
+In below screenshot M.Multiply is custom method which accepts 2 int type parameter
 
 ![Alt text](https://github.com/lokeshlal/BusinessRules/blob/master/rules_demo.png "rules")
