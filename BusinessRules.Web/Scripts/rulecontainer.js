@@ -136,6 +136,8 @@ $('#btnAddRuleModel').click(function () {
     var ruleName = $('#ruleName').val();
     var ruleFact = $('#ruleFact').val();
 
+    $('.executionContainer').eq(0).html('<div class="ruleexecution"><div class="form-group"><label>Property:</label><div class="propertyContainer">' + propertySelectElement + '</div></div><div class="form-group"><label>Order:</label><input class="form-control order"></div><div contenteditable="true" class="executionDiv" onkeydown="return keydown(event);"  onblur="activeDiv(this);" style="border: 1px solid lightgray; min-height: 75px; margin-bottom: 10px;"></div></div>');
+
     $.ajax({
         url: '/api/async/GetEntityDefinition',
         method: 'POST',
@@ -160,6 +162,9 @@ $('#btnAddRuleModel').click(function () {
             $('.propertyContainer').html(propertySelectElement);
             $('#ruleNameLbl').html(ruleName);
             $('#ruleDetails').removeClass('hidden');
+            $('#priority').val('');
+            $('#ruleGroup').val('');
+            $('#condition').text('');
             $('#entityName').val(ruleFact);
             $('#new-rule-modal').modal('toggle');
         }
