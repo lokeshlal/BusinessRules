@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BusinessRules.Client;
 using System;
-using System.Net.Http;
-using System.Text;
 
 namespace BusinessRules.Console
 {
@@ -11,13 +9,12 @@ namespace BusinessRules.Console
         {
             public string Name { get; set; }
             public int Age { get; set; }
+            public float FloatField { get; set; } 
+            public bool BooleanField { get; set; }
+            public DateTime DateTimeField { get; set; }
+            public string Address { get; set; }
         }
 
-        public class ExecuteRuleDefinition
-        {
-            public object entity { get; set; }
-            public string ruleName { get; set; }
-        }
         static void Main(string[] args)
         {
 
@@ -27,20 +24,9 @@ namespace BusinessRules.Console
                 Age = 26
             };
 
-            ExecuteRuleDefinition executeRule = new ExecuteRuleDefinition()
-            {
-                entity = p,
-                ruleName = "PersonRule1"
-            };
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:61871/");
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            var resp2 = client.PostAsync("api/async/executerule", new System.Net.Http.StringContent(JsonConvert.SerializeObject(executeRule), Encoding.UTF8, "application/json")).Result;
-            resp2.EnsureSuccessStatusCode();
-            var ss = resp2.Content.ReadAsStringAsync().Result;
-            System.Console.WriteLine("--Output--");
-            System.Console.WriteLine(ss);
+            BusinessRulesClient client = new BusinessRulesClient("http://localhost:61871/");
+            p = client.ExecuteRule("PersonRule1", p);
+            System.Console.WriteLine(string.Format("{0} - {1}", p.Name, p.Age));
             System.Console.ReadLine();
         }
     }

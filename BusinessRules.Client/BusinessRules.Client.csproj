@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2C2D3A2-A315-49E5-AFCA-86A3AA764E5E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{EC2002D3-68BC-464B-A852-AFEFA8278034}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BusinessRules.Console</RootNamespace>
-    <AssemblyName>BusinessRules.Console</AssemblyName>
+    <RootNamespace>BusinessRules.Client</RootNamespace>
+    <AssemblyName>BusinessRules.Client</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -47,29 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="BusinessRulesClient.cs" />
+    <Compile Include="ExecuteRuleDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BusinessRules.Client\BusinessRules.Client.csproj">
-      <Project>{ec2002d3-68bc-464b-a852-afefa8278034}</Project>
-      <Name>BusinessRules.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BusinessRules.Common\BusinessRules.Common.csproj">
-      <Project>{7771b706-b281-4f6d-a9dd-f43b7fa68865}</Project>
-      <Name>BusinessRules.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BusinessRules.Core\BusinessRules.Core.csproj">
-      <Project>{20e7a809-b065-4fbc-aadd-bd6314c732e6}</Project>
-      <Name>BusinessRules.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HelperDlls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

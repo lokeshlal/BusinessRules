@@ -5,6 +5,7 @@ using BusinessRules.Core;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using System.Net.Http;
 
 namespace BusinessRules.Web.Controllers
 {
@@ -211,19 +212,19 @@ namespace BusinessRules.Web.Controllers
 
         #region rule execution
         [HttpPost]
-        public string ExecuteRule(ExecuteRuleDefinition executeRuleDefinition)
+        public IHttpActionResult ExecuteRule(ExecuteRuleDefinition executeRuleDefinition)
         {
             object entity = executeRuleDefinition.entity;
             string ruleName = executeRuleDefinition.ruleName;
-            return JsonConvert.SerializeObject(RulesManager.ExecuteRule(ruleName, entity));
+            return Ok(RulesManager.ExecuteRule(ruleName, entity));
         }
 
         [HttpPost]
-        public string ExecuteRuleGroup(ExecuteRuleDefinition executeRuleDefinition)
+        public IHttpActionResult ExecuteRuleGroup(ExecuteRuleDefinition executeRuleDefinition)
         {
             object entity = executeRuleDefinition.entity;
             string ruleGroupName = executeRuleDefinition.ruleName;
-            return JsonConvert.SerializeObject(RulesManager.ExecuteRuleGroup(ruleGroupName, entity));
+            return Ok(RulesManager.ExecuteRuleGroup(ruleGroupName, entity));
         }
         #endregion
     }
