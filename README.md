@@ -79,4 +79,4 @@ In below screenshot M.Multiply is custom method which accepts 2 int type paramet
 
 #### Note
 
-For client librayr usage please see BusinessRules.Client and BusinessRules.Console project.
+For client library usage, i.e. how to call rules from client application, please see BusinessRules.Client and BusinessRules.Console project.
