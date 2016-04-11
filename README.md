@@ -75,3 +75,8 @@ Person.Name + "Updated"
 In below screenshot M.Multiply is custom method which accepts 2 int type parameter
 
 ![Alt text](https://raw.githubusercontent.com/lokeshlal/BusinessRules/master/rules_demo.png "rules")
+
+
+#### Note
+
+For client librayr usage please see BusinessRules.Client and BusinessRules.Console project.
