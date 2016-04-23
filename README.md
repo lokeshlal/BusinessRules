@@ -22,7 +22,7 @@ First parameter is dummy name, second is number of parameter this function accep
 
 Custom methods are useful for complicated formulas, database lookups, using data from REST APIs or any custom feature.
 
-Such as to implement Excel like IF method implement a method using following signature
+Such as to implement an Excel like "IF" method implement a method using following signature
 ```
 T IF<T>(bool condition, T ActionIftrue, T ActionIfFalse);
 ```
