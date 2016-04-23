@@ -20,6 +20,13 @@ Pending Items:
 ```
 First parameter is dummy name, second is number of parameter this function accepts and third is type of parameters this method accepts.
 
+Custom methods are useful for complicated formulas, database lookups, using data from REST APIs or any custom feature.
+
+Such as to implement Excel like IF method implement a method using following signature
+```
+T IF<T>(bool condition, T ActionIftrue, T ActionIfFalse);
+```
+
 # Rest End points
 BusinessRules.Console project shows a sample usage of how to execute rules via rest call.
 There are 2 end points to execute rules
