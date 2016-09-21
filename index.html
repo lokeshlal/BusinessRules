@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Business Rules by lokeshlal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Business Rules</h1>
+      <h2 class="project-tagline">Simple Business Rules</h2>
+      <a href="https://github.com/lokeshlal/BusinessRules" class="btn">View on GitHub</a>
+      <a href="https://github.com/lokeshlal/BusinessRules/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/lokeshlal/BusinessRules/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="businessrules" class="anchor" href="#businessrules" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BusinessRules</h1>
+
+<p>Simple Business Rules</p>
+
+<ol>
+<li>Create/update Facts from UI</li>
+<li>Create/update rules for fact from UI</li>
+<li>Assign a rule group name to rules, to execute set of rules against a Fact</li>
+<li>Rest based services to execute the rules</li>
+</ol>
+
+<p>Pending Items:</p>
+
+<ol>
+<li>Add more test cases</li>
+</ol>
+
+<h1>
+<a id="how-to-add-custom-methods" class="anchor" href="#how-to-add-custom-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to add custom methods</h1>
+
+<ol>
+<li>All custom methods should be added in BusinessRules.BasicMethodsLibrary class library project</li>
+<li>All custom methods should be part of class "BasicMethods" and should be in namespace "M". As this is the pattern used in "Core" to identify the custom methods. So new set of methods can be added to existing class or a new partial class file can be created.</li>
+<li>HelperMethod attribute should be present with all custom methods for example</li>
+</ol>
+
+<pre><code>[HelperMethod("StringConcatenate", 2, "string, string")]
+</code></pre>
+
+<p>First parameter is dummy name, second is number of parameter this function accepts and third is type of parameters this method accepts.</p>
+
+<p>Custom methods are useful for complicated formulas, database lookups, using data from REST APIs or any custom feature.</p>
+
+<p>Such as to implement an Excel like "IF" method implement a method using following signature</p>
+
+<pre><code>T IF&lt;T&gt;(bool condition, T ActionIftrue, T ActionIfFalse);
+</code></pre>
+
+<h1>
+<a id="rest-end-points" class="anchor" href="#rest-end-points" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rest End points</h1>
+
+<p>BusinessRules.Console project shows a sample usage of how to execute rules via rest call.
+There are 2 end points to execute rules</p>
+
+<ol>
+<li>api/async/executerule - To execute a single rule</li>
+<li>api/async/executerulegroup - To execute set of rules with in a same rule group</li>
+</ol>
+
+<h1>
+<a id="rule-groups" class="anchor" href="#rule-groups" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rule Groups</h1>
+
+<p>All rules in a Rule Group should have same Facts associated.</p>
+
+<h1>
+<a id="writing-rules" class="anchor" href="#writing-rules" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Writing Rules</h1>
+
+<p>Write rules in a similar way you would write a Linq query or regular conditions</p>
+
+<p>For example, Lets assume we have fact Person</p>
+
+<pre><code>class Person
+{
+  public string Name { get; set; }
+  public int Age { get; set; }
+}
+</code></pre>
+
+<p>To write a rule condition where age is between 20 and 30</p>
+
+<pre><code>(Person.Age &gt; 20 And Person.Age &lt; 30)
+</code></pre>
+
+<p>Now to add the execution (Action) part</p>
+
+<p>First assign a property to the action and its order of execution as well (because a single rule can have multiple actions)</p>
+
+<p>Now lets say if above condition is true, then we have to multiple age by 2 and concatenate "Updated" in the Name.</p>
+
+<p>So we will add 2 executions to rule.</p>
+
+<p>First one would look like this</p>
+
+<p>Property = Age, Order = 1 and rule execution should look like this</p>
+
+<pre><code>Person.Age * 2
+</code></pre>
+
+<p>Second would look like this</p>
+
+<p>Property = Name, Order = 2 and rule execution should look like this</p>
+
+<pre><code>Person.Name + "Updated"
+</code></pre>
+
+<h4>
+<a id="rules-example" class="anchor" href="#rules-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rules example:</h4>
+
+<p>In below screenshot M.Multiply is custom method which accepts 2 int type parameter</p>
+
+<p><img src="https://raw.githubusercontent.com/lokeshlal/BusinessRules/master/rules_demo.png" alt="Alt text" title="rules"></p>
+
+<h4>
+<a id="note" class="anchor" href="#note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Note</h4>
+
+<p>For client library usage, i.e. how to call rules from client application, please see BusinessRules.Client and BusinessRules.Console project.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/lokeshlal/BusinessRules">Business Rules</a> is maintained by <a href="https://github.com/lokeshlal">lokeshlal</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
